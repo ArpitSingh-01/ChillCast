@@ -198,9 +198,8 @@ const Room = () => {
   };
 
   const shareRoom = () => {
-    const shareUrl = `${window.location.origin}/room?mode=join&roomCode=${roomCode}`;
-    navigator.clipboard.writeText(shareUrl);
-    toast.success("Room link copied to clipboard!");
+    navigator.clipboard.writeText(roomCode);
+    toast.success("Room code copied to clipboard!");
   };
 
   if (mode === "room" && roomId) {
