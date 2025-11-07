@@ -252,12 +252,12 @@ const ChatBox = ({ roomId, nickname, privateRecipient }: ChatBoxProps) => {
         </div>
       )}
 
-      <ScrollArea className="flex-1 pr-4 mb-4">
-        <div className="space-y-3">
+      <ScrollArea className="flex-1 pr-4 mb-4 min-h-0">
+        <div className="space-y-3 pb-2">
           {filteredMessages.map((msg) => (
             <div
               key={msg.id}
-              className={`p-3 rounded-lg ${
+              className={`p-3 rounded-lg break-words ${
                 msg.sender === nickname
                   ? "bg-primary/20 ml-8"
                   : "bg-secondary/20 mr-8"
@@ -273,7 +273,7 @@ const ChatBox = ({ roomId, nickname, privateRecipient }: ChatBoxProps) => {
                   </span>
                 )}
               </div>
-              <p className="text-sm">{msg.message}</p>
+              <p className="text-sm break-words">{msg.message}</p>
             </div>
           ))}
           <div ref={scrollRef} />

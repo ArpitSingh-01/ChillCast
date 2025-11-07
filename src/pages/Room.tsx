@@ -204,11 +204,11 @@ const Room = () => {
 
   if (mode === "room" && roomId) {
     return (
-      <div className="min-h-screen relative overflow-hidden">
+      <div className="h-screen relative overflow-hidden flex flex-col">
         <SilkBackground />
         
-        <div className="relative z-10 p-4 md:p-6">
-          <div className="flex items-center justify-between mb-6">
+        <div className="relative z-10 p-4 md:p-6 flex flex-col h-full">
+          <div className="flex items-center justify-between mb-4 flex-shrink-0">
             <Button variant="ghost" onClick={leaveRoom}>
               <ArrowLeft className="w-4 h-4 mr-2" />
               Leave Room
@@ -223,20 +223,20 @@ const Room = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-140px)]">
-            <div className="lg:col-span-2">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
+            <div className="lg:col-span-2 min-h-0">
               <MediaPlayer roomId={roomId} isHost={isHost} hostName={hostName} sessionId={sessionId} />
             </div>
             
-            <div className="flex flex-col gap-6 h-full">
-              <div className="flex-[2] min-h-[300px]">
+            <div className="flex flex-col gap-6 h-full min-h-0">
+              <div className="flex-[2] min-h-0">
                 <ChatBox 
                   roomId={roomId} 
                   nickname={nickname}
                   privateRecipient={privateRecipient}
                 />
               </div>
-              <div className="flex-1 min-h-[250px]">
+              <div className="flex-1 min-h-0">
                 <MembersList
                   roomId={roomId}
                   hostName={hostName}
