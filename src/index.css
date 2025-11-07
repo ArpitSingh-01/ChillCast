@@ -1,0 +1,197 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* ChillCast Dark Theme - Purple, Blue & Black */
+    --background: 0 0% 5%;
+    --foreground: 0 0% 98%;
+
+    --card: 250 50% 12%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 250 50% 10%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Primary: Electric Purple (#8b5cf6) */
+    --primary: 260 85% 65%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 260 85% 75%;
+
+    /* Secondary: Deep Blue (#3b82f6) */
+    --secondary: 215 90% 60%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 250 30% 18%;
+    --muted-foreground: 250 10% 65%;
+
+    /* Accent: Cyan Blue (#06b6d4) */
+    --accent: 190 95% 43%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 250 30% 25%;
+    --input: 250 40% 15%;
+    --ring: 260 85% 65%;
+
+    --radius: 0.75rem;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(260 85% 65%), hsl(215 90% 60%), hsl(190 95% 43%));
+    --gradient-card: linear-gradient(145deg, hsl(250 50% 15% / 0.9), hsl(250 40% 10% / 0.7));
+    --gradient-button: linear-gradient(135deg, hsl(260 85% 65%), hsl(215 90% 60%));
+    --gradient-nebula: radial-gradient(ellipse at center, hsl(260 85% 35% / 0.3) 0%, hsl(215 90% 30% / 0.2) 50%, transparent 100%);
+    
+    /* Shadows with glow */
+    --shadow-glow: 0 0 50px hsl(260 85% 65% / 0.4);
+    --shadow-card: 0 20px 60px -10px hsl(260 85% 30% / 0.6);
+    --shadow-blue-glow: 0 0 40px hsl(215 90% 60% / 0.3);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@layer base {
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Galaxy Background with Purple/Blue Stars */
+  .galaxy-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(ellipse at 20% 30%, hsl(260 85% 15% / 0.4) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, hsl(215 90% 15% / 0.3) 0%, transparent 50%),
+      radial-gradient(ellipse at bottom, hsl(250 40% 8%) 0%, hsl(0 0% 3%) 100%);
+    z-index: -1;
+    overflow: hidden;
+  }
+
+  .galaxy-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      radial-gradient(2px 2px at 20% 30%, hsl(260 85% 75%), transparent),
+      radial-gradient(2px 2px at 60% 70%, hsl(215 90% 70%), transparent),
+      radial-gradient(1px 1px at 50% 50%, hsl(190 95% 70%), transparent),
+      radial-gradient(1px 1px at 80% 10%, white, transparent),
+      radial-gradient(2px 2px at 90% 60%, hsl(260 85% 80%), transparent),
+      radial-gradient(1px 1px at 33% 90%, hsl(215 90% 75%), transparent),
+      radial-gradient(1px 1px at 15% 80%, hsl(190 95% 65%), transparent),
+      radial-gradient(3px 3px at 45% 15%, hsl(260 85% 70%), transparent),
+      radial-gradient(1px 1px at 70% 45%, white, transparent);
+    background-size: 250% 250%;
+    animation: twinkle 10s ease-in-out infinite;
+    opacity: 0.6;
+  }
+
+  .galaxy-bg::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(circle at 30% 40%, hsl(260 85% 40% / 0.15) 0%, transparent 25%),
+      radial-gradient(circle at 70% 60%, hsl(215 90% 40% / 0.12) 0%, transparent 30%);
+    animation: nebula 20s ease-in-out infinite;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.8; }
+  }
+
+  @keyframes nebula {
+    0%, 100% { 
+      transform: scale(1) rotate(0deg);
+      opacity: 0.6;
+    }
+    50% { 
+      transform: scale(1.1) rotate(5deg);
+      opacity: 0.4;
+    }
+  }
+
+  /* Glass morphism effect */
+  .glass-card {
+    background: linear-gradient(145deg, hsl(250 50% 15% / 0.9), hsl(250 40% 10% / 0.7));
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(260 40% 35% / 0.3);
+    box-shadow: 
+      0 8px 32px 0 hsl(0 0% 0% / 0.5),
+      inset 0 1px 1px 0 hsl(260 85% 75% / 0.1);
+  }
+
+  /* 3D Tilt Card Effect */
+  .tilt-card {
+    transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .tilt-card:hover {
+    transform: perspective(1000px) rotateX(var(--rotate-x, 0deg)) rotateY(var(--rotate-y, 0deg)) scale3d(1.05, 1.05, 1.05);
+  }
+
+  .tilt-card-inner {
+    transform: translateZ(50px);
+  }
+
+  /* Smooth scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(250 40% 10%);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, hsl(260 85% 65%), hsl(215 90% 60%));
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, hsl(260 85% 75%), hsl(215 90% 70%));
+  }
+
+  /* Gradient animation */
+  @keyframes gradient-shift {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  .animate-gradient {
+    animation: gradient-shift 4s ease infinite;
+  }
+}
