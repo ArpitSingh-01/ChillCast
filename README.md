@@ -69,11 +69,7 @@
 
 ## 🚀 Demo
 
-Experience ChillCast live: [Your Deployment URL]
-
-### Screenshots
-
-*Coming soon - Add your screenshots here*
+Experience ChillCast live: [chill-cast.vercel.app]
 
 ---
 
