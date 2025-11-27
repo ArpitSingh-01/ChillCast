@@ -27,10 +27,10 @@ const SilkBackground = () => {
       speed: number;
       color: string;
     }> = [
-      { amplitude: 100, frequency: 0.002, phase: 0, speed: 0.02, color: 'rgba(147, 51, 234, 0.1)' },
-      { amplitude: 80, frequency: 0.003, phase: Math.PI / 2, speed: 0.015, color: 'rgba(168, 85, 247, 0.08)' },
-      { amplitude: 120, frequency: 0.0015, phase: Math.PI, speed: 0.025, color: 'rgba(192, 132, 252, 0.06)' },
-    ];
+        { amplitude: 100, frequency: 0.002, phase: 0, speed: 0.02, color: 'rgba(147, 51, 234, 0.1)' },
+        { amplitude: 80, frequency: 0.003, phase: Math.PI / 2, speed: 0.015, color: 'rgba(168, 85, 247, 0.08)' },
+        { amplitude: 120, frequency: 0.0015, phase: Math.PI, speed: 0.025, color: 'rgba(192, 132, 252, 0.06)' },
+      ];
 
     const animate = () => {
       ctx.fillStyle = 'rgba(10, 10, 20, 0.1)';

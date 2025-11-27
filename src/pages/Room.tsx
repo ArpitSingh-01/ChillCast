@@ -5,14 +5,16 @@ import SilkBackground from "@/components/SilkBackground";
 import MediaPlayer from "@/components/room/MediaPlayer";
 import ChatBox from "@/components/room/ChatBox";
 import MembersList from "@/components/room/MembersList";
+import VoiceChat from "@/components/room/VoiceChat";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import bcrypt from "bcryptjs";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MessageCircle, Users } from "lucide-react";
 
 const Room = () => {
   const navigate = useNavigate();
@@ -31,11 +33,12 @@ const Room = () => {
   const [rejoinHostPassword, setRejoinHostPassword] = useState("");
   const [privateRecipient, setPrivateRecipient] = useState<string | null>(null);
   const [sessionId] = useState<string>(() => crypto.randomUUID());
+  const [activeTab, setActiveTab] = useState<string>("chat");
 
   useEffect(() => {
     const modeParam = searchParams.get("mode");
     const roomCodeParam = searchParams.get("roomCode");
-    
+
     if (modeParam === "create") {
       setMode("create");
     } else if (modeParam === "join" || roomCodeParam) {
@@ -55,12 +58,23 @@ const Room = () => {
     const hashedPassword = await bcrypt.hash(hostPassword, 10);
     const hashedRoomPassword = roomPassword ? await bcrypt.hash(roomPassword, 10) : null;
 
+    // Get user's IP address (optional)
+    let userIP = null;
+    try {
+      const ipResponse = await fetch('https://api.ipify.org?format=json');
+      const ipData = await ipResponse.json();
+      userIP = ipData.ip;
+    } catch (error) {
+      console.log("Could not fetch IP address");
+    }
+
     const { data, error } = await supabase
       .from("rooms")
       .insert({
         host_name: hostName,
         host_password: hashedPassword,
         room_password: hashedRoomPassword,
+        host_ip: userIP,
       })
       .select()
       .single();
@@ -206,7 +220,7 @@ const Room = () => {
     return (
       <div className="h-screen relative overflow-hidden">
         <SilkBackground />
-        
+
         <div className="relative z-10 h-full flex flex-col">
           <div className="flex items-center justify-between p-4 md:p-6 pb-4 flex-shrink-0">
             <Button variant="ghost" onClick={leaveRoom}>
@@ -227,24 +241,50 @@ const Room = () => {
             <div className="lg:col-span-2 h-full overflow-auto">
               <MediaPlayer roomId={roomId} isHost={isHost} hostName={hostName} sessionId={sessionId} />
             </div>
-            
+
             <div className="flex flex-col gap-6 h-full overflow-hidden">
-              <div className="flex-[2] min-h-0 overflow-hidden">
-                <ChatBox 
-                  roomId={roomId} 
+              <div className="flex-shrink-0">
+                <VoiceChat
+                  roomId={roomId}
                   nickname={nickname}
-                  privateRecipient={privateRecipient}
+                  sessionId={sessionId}
                 />
               </div>
               <div className="flex-1 min-h-0 overflow-hidden">
-                <MembersList
-                  roomId={roomId}
-                  hostName={hostName}
-                  currentNickname={nickname}
-                  onPrivateChat={(recipientNickname) => {
-                    setPrivateRecipient(recipientNickname === privateRecipient ? null : recipientNickname);
-                  }}
-                />
+                <Card className="glass-card p-6 h-full flex flex-col">
+                  <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
+                    <TabsList className="grid w-full grid-cols-2 mb-4">
+                      <TabsTrigger value="chat" className="gap-2">
+                        <MessageCircle className="w-4 h-4" />
+                        Chat
+                      </TabsTrigger>
+                      <TabsTrigger value="members" className="gap-2">
+                        <Users className="w-4 h-4" />
+                        Members
+                      </TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="chat" className="flex-1 mt-0 data-[state=active]:flex data-[state=active]:flex-col overflow-hidden">
+                      <ChatBox
+                        roomId={roomId}
+                        nickname={nickname}
+                        privateRecipient={privateRecipient}
+                      />
+                    </TabsContent>
+
+                    <TabsContent value="members" className="flex-1 mt-0 data-[state=active]:flex data-[state=active]:flex-col overflow-hidden">
+                      <MembersList
+                        roomId={roomId}
+                        hostName={hostName}
+                        currentNickname={nickname}
+                        onPrivateChat={(recipientNickname) => {
+                          setPrivateRecipient(recipientNickname === privateRecipient ? null : recipientNickname);
+                          setActiveTab("chat"); // Switch to chat tab
+                        }}
+                      />
+                    </TabsContent>
+                  </Tabs>
+                </Card>
               </div>
             </div>
           </div>
@@ -256,7 +296,7 @@ const Room = () => {
   return (
     <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4">
       <SilkBackground />
-      
+
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}

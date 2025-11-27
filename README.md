@@ -1,4 +1,4 @@
-# 🎬 ChillCast - Watch Together, Vibe Together
+# 🎬 ChillCast - Watch Together, Chill Together
 
 <div align="center">
 
@@ -35,16 +35,24 @@
 - WebRTC-powered peer-to-peer connections
 - Show anything beyond YouTube videos
 
+### 🎤 **Voice Chat** (NEW!)
+- Real-time peer-to-peer voice communication
+- Mute/unmute controls
+- Deafen option to mute all incoming audio
+- TURN server support for NAT traversal
+- Works across different networks and firewalls
+
 ### 💬 **Real-time Chat**
 - Public room chat for everyone
 - Private messaging between members
 - Emoji support for expressive communication
-- Live typing indicators
+- Tabbed interface with Members list
 
 ### 👥 **Live Members List**
 - See who's in your room in real-time
 - Online/offline status indicators
 - Quick access to private chat
+- Integrated with chat in tabbed view
 
 ### ⚡ **No Login Required**
 - Jump right in without creating an account
@@ -165,11 +173,14 @@ The app will be available at `http://localhost:8080`
 - **Supabase** - Backend as a Service
   - PostgreSQL database
   - Real-time subscriptions
-  - Authentication (optional)
+  - Broadcast channels for signaling
 
 ### Media & Communication
 - **react-youtube** - YouTube player integration
-- **WebRTC** - Peer-to-peer screen sharing
+- **WebRTC** - Peer-to-peer connections
+  - Screen sharing with audio
+  - Voice chat with TURN servers
+  - ICE candidate handling
 - **bcryptjs** - Password hashing
 
 ### State Management & Routing
@@ -327,3 +338,37 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ⭐ Star this repo if you find it helpful!
 
 </div>
+
+
+---
+
+## 🎤 Voice Chat Guide
+
+Voice chat uses WebRTC for peer-to-peer audio communication with TURN server support.
+
+### Testing Requirements:
+- ✅ Test on **different devices** (computer + phone)  
+- ✅ Or use **different browsers** (Chrome + Firefox)
+- ❌ Won't work with same microphone in two tabs on same computer
+
+### How to Use:
+1. Join a room and allow microphone access
+2. Click **"Unmute"** button to enable your microphone
+3. Speak - other participants will hear you
+4. Use **"Deafen"** to mute all incoming audio
+5. Connected peers shown in "X connected" counter
+
+### Troubleshooting:
+- **No audio?** → Ensure both users clicked "Unmute"
+- **Connection failed?** → TURN servers handle NAT traversal automatically  
+- **Testing locally?** → Use different devices or browsers
+
+---
+
+## 📦 Bundle Size
+
+- Production build: ~732 KB (includes WebRTC for voice/screen sharing)
+- Gzipped: ~226 KB
+- Consider code-splitting for larger apps
+
+---
