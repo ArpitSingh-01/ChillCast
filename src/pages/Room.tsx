@@ -222,27 +222,27 @@ const Room = () => {
         <SilkBackground />
 
         <div className="relative z-10 h-full flex flex-col">
-          <div className="flex items-center justify-between p-4 md:p-6 pb-4 flex-shrink-0">
-            <Button variant="ghost" onClick={leaveRoom}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Leave Room
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 sm:p-4 md:p-6 pb-3 sm:pb-4 flex-shrink-0">
+            <Button variant="ghost" onClick={leaveRoom} size="sm" className="text-xs sm:text-sm">
+              <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+              Leave
             </Button>
-            <div className="flex items-center gap-4">
-              <div className="text-sm text-muted-foreground">
-                Room Code: <span className="text-primary font-mono text-lg font-bold">{roomCode}</span>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
+              <div className="text-xs sm:text-sm text-muted-foreground">
+                Room: <span className="text-primary font-mono text-sm sm:text-lg font-bold">{roomCode}</span>
               </div>
-              <Button variant="outline" size="sm" onClick={shareRoom}>
-                Share Room
+              <Button variant="outline" size="sm" onClick={shareRoom} className="text-xs sm:text-sm w-full sm:w-auto">
+                Share
               </Button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0 px-4 md:px-6 pb-4 md:pb-6">
-            <div className="lg:col-span-2 h-full overflow-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-6 flex-1 min-h-0 px-3 sm:px-4 md:px-6 pb-3 sm:pb-4 md:pb-6">
+            <div className="lg:col-span-2 h-[40vh] lg:h-full overflow-auto">
               <MediaPlayer roomId={roomId} isHost={isHost} hostName={hostName} sessionId={sessionId} />
             </div>
 
-            <div className="flex flex-col gap-6 h-full overflow-hidden">
+            <div className="flex flex-col gap-3 sm:gap-6 h-[55vh] lg:h-full overflow-hidden">
               <div className="flex-shrink-0">
                 <VoiceChat
                   roomId={roomId}
@@ -251,16 +251,16 @@ const Room = () => {
                 />
               </div>
               <div className="flex-1 min-h-0 overflow-hidden">
-                <Card className="glass-card p-6 h-full flex flex-col">
+                <Card className="glass-card p-3 sm:p-6 h-full flex flex-col">
                   <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-                    <TabsList className="grid w-full grid-cols-2 mb-4">
-                      <TabsTrigger value="chat" className="gap-2">
-                        <MessageCircle className="w-4 h-4" />
-                        Chat
+                    <TabsList className="grid w-full grid-cols-2 mb-3 sm:mb-4">
+                      <TabsTrigger value="chat" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+                        <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="hidden sm:inline">Chat</span>
                       </TabsTrigger>
-                      <TabsTrigger value="members" className="gap-2">
-                        <Users className="w-4 h-4" />
-                        Members
+                      <TabsTrigger value="members" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+                        <Users className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="hidden sm:inline">Members</span>
                       </TabsTrigger>
                     </TabsList>
 

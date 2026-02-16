@@ -83,45 +83,45 @@ const MembersList = ({ roomId, hostName, currentNickname, onPrivateChat }: Membe
   };
 
   return (
-    <Card className="glass-card p-6 h-full flex flex-col">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold">Members</h2>
-        <Badge variant="secondary" className="text-sm">
+    <Card className="glass-card p-3 sm:p-6 h-full flex flex-col">
+      <div className="flex items-center justify-between mb-3 sm:mb-4">
+        <h2 className="text-lg sm:text-xl font-bold">Members</h2>
+        <Badge variant="secondary" className="text-xs sm:text-sm">
           {members.length} online
         </Badge>
       </div>
 
       <ScrollArea className="flex-1">
         {members.length === 0 ? (
-          <div className="flex items-center justify-center h-32 text-muted-foreground text-sm">
+          <div className="flex items-center justify-center h-32 text-muted-foreground text-xs sm:text-sm">
             No members yet
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             {members.map((member) => (
               <div
                 key={member.id}
-                className="flex items-center justify-between p-4 rounded-xl bg-card/50 hover:bg-card/80 transition-all duration-200 border border-border/50 hover:border-primary/30 animate-fade-in"
+                className="flex items-center justify-between p-2 sm:p-4 rounded-xl bg-card/50 hover:bg-card/80 transition-all duration-200 border border-border/50 hover:border-primary/30 animate-fade-in"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                   <div className="relative">
-                    <Avatar className="h-10 w-10 border-2 border-primary/20">
-                      <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                    <Avatar className="h-8 w-8 sm:h-10 sm:w-10 border-2 border-primary/20">
+                      <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs sm:text-sm">
                         {getInitials(member.nickname)}
                       </AvatarFallback>
                     </Avatar>
                     <div
-                      className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-background ${
+                      className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 rounded-full border-2 border-background ${
                         member.is_online ? "bg-green-500 animate-pulse" : "bg-muted"
                       }`}
                     />
                   </div>
                   <div className="flex flex-col">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-sm">{member.nickname}</span>
+                    <div className="flex items-center gap-1 sm:gap-2">
+                      <span className="font-semibold text-xs sm:text-sm">{member.nickname}</span>
                       {member.nickname === hostName && (
-                        <Badge variant="default" className="h-5 px-1.5 gap-1">
-                          <Crown className="w-3 h-3" />
+                        <Badge variant="default" className="h-4 sm:h-5 px-1 sm:px-1.5 gap-0.5 sm:gap-1">
+                          <Crown className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                           <span className="text-xs">Host</span>
                         </Badge>
                       )}
@@ -136,10 +136,10 @@ const MembersList = ({ roomId, hostName, currentNickname, onPrivateChat }: Membe
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 hover:bg-primary/10 hover:text-primary"
+                    className="h-7 w-7 sm:h-8 sm:w-8 hover:bg-primary/10 hover:text-primary"
                     onClick={() => onPrivateChat(member.nickname)}
                   >
-                    <MessageCircle className="w-4 h-4" />
+                    <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
                   </Button>
                 )}
               </div>

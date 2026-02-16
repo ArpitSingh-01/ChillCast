@@ -196,50 +196,50 @@ const ChatBox = ({ roomId, nickname, privateRecipient }: ChatBoxProps) => {
   });
 
   return (
-    <Card className="glass-card p-6 h-full flex flex-col">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold">Chat</h2>
+    <Card className="glass-card p-3 sm:p-6 h-full flex flex-col">
+      <div className="flex items-center justify-between mb-3 sm:mb-4">
+        <h2 className="text-lg sm:text-2xl font-bold">Chat</h2>
       </div>
 
-      <Tabs value={chatMode} onValueChange={(value) => handleModeChange(value as "public" | "private")} className="mb-4">
+      <Tabs value={chatMode} onValueChange={(value) => handleModeChange(value as "public" | "private")} className="mb-3 sm:mb-4">
         <TabsList className="bg-background/50 w-full">
-          <TabsTrigger value="public" className="gap-2 flex-1">
-            <Users className="w-4 h-4" />
+          <TabsTrigger value="public" className="gap-1 sm:gap-2 flex-1 text-xs sm:text-sm">
+            <Users className="w-3 h-3 sm:w-4 sm:h-4" />
             Public
           </TabsTrigger>
-          <TabsTrigger value="private" className="gap-2 flex-1">
-            <MessageCircle className="w-4 h-4" />
+          <TabsTrigger value="private" className="gap-1 sm:gap-2 flex-1 text-xs sm:text-sm">
+            <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
             Private
           </TabsTrigger>
         </TabsList>
       </Tabs>
 
       {chatMode === "private" && (
-        <div className="mb-4">
+        <div className="mb-3 sm:mb-4">
           {privateChatMembers.length === 0 ? (
-            <div className="text-center py-4 text-sm text-muted-foreground">
+            <div className="text-center py-3 sm:py-4 text-xs sm:text-sm text-muted-foreground">
               No private chats yet. Click the message icon in Members list to start a private chat.
             </div>
           ) : (
-            <ScrollArea className="max-h-32">
+            <ScrollArea className="max-h-24 sm:max-h-32">
               <div className="space-y-2">
                 {privateChatMembers.map((member) => (
                   <div
                     key={member.nickname}
                     onClick={() => handleRecipientSelect(member.nickname)}
-                    className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all ${
+                    className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg cursor-pointer transition-all ${
                       selectedRecipient === member.nickname
                         ? "bg-primary/20 border-2 border-primary/50"
                         : "bg-secondary/20 hover:bg-secondary/30 border-2 border-transparent"
                     }`}
                   >
-                    <Avatar className="h-8 w-8 border-2 border-primary/20">
+                    <Avatar className="h-6 w-6 sm:h-8 sm:w-8 border-2 border-primary/20">
                       <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">
                         {getInitials(member.nickname)}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-sm">{member.nickname}</div>
+                      <div className="font-semibold text-xs sm:text-sm">{member.nickname}</div>
                       <div className="text-xs text-muted-foreground truncate">
                         {member.lastMessage}
                       </div>
@@ -252,19 +252,19 @@ const ChatBox = ({ roomId, nickname, privateRecipient }: ChatBoxProps) => {
         </div>
       )}
 
-      <ScrollArea className="flex-1 pr-4 mb-4 min-h-0">
-        <div className="space-y-3 pb-2">
+      <ScrollArea className="flex-1 pr-2 sm:pr-4 mb-3 sm:mb-4 min-h-0">
+        <div className="space-y-2 sm:space-y-3 pb-2">
           {filteredMessages.map((msg) => (
             <div
               key={msg.id}
-              className={`p-3 rounded-lg break-words ${
+              className={`p-2 sm:p-3 rounded-lg break-words text-xs sm:text-sm ${
                 msg.sender === nickname
-                  ? "bg-primary/20 ml-8"
-                  : "bg-secondary/20 mr-8"
+                  ? "bg-primary/20 ml-4 sm:ml-8"
+                  : "bg-secondary/20 mr-4 sm:mr-8"
               }`}
             >
-              <div className="flex items-center gap-2 mb-1">
-                <span className="font-semibold text-sm text-primary">
+              <div className="flex items-center gap-1 sm:gap-2 mb-1">
+                <span className="font-semibold text-xs sm:text-sm text-primary">
                   {msg.sender}
                 </span>
                 {msg.is_private && (
@@ -273,7 +273,7 @@ const ChatBox = ({ roomId, nickname, privateRecipient }: ChatBoxProps) => {
                   </span>
                 )}
               </div>
-              <p className="text-sm break-words">{msg.message}</p>
+              <p className="text-xs sm:text-sm break-words">{msg.message}</p>
             </div>
           ))}
           <div ref={scrollRef} />
@@ -286,10 +286,10 @@ const ChatBox = ({ roomId, nickname, privateRecipient }: ChatBoxProps) => {
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          className="flex-1"
+          className="flex-1 text-xs sm:text-sm"
         />
-        <Button onClick={sendMessage} size="icon">
-          <Send className="w-4 h-4" />
+        <Button onClick={sendMessage} size="icon" className="h-9 w-9 sm:h-10 sm:w-10">
+          <Send className="w-3 h-3 sm:w-4 sm:h-4" />
         </Button>
       </div>
     </Card>

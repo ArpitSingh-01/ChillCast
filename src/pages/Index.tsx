@@ -194,11 +194,11 @@ const Index = () => {
 
       {/* Simple Navigation Bar */}
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-background/40 border-b border-border/50">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent"
+            className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent"
           >
             ✨ ChillCast
           </motion.div>
@@ -206,11 +206,11 @@ const Index = () => {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex gap-2"
+            className="flex gap-1 sm:gap-2"
           >
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${activeSection === 'home'
+              className={`px-2 sm:px-6 py-1.5 sm:py-2 text-xs sm:text-base rounded-full font-medium transition-all duration-300 ${activeSection === 'home'
                 ? 'bg-purple-600/80 text-white'
                 : 'bg-transparent hover:bg-purple-600/20 border border-purple-500/50 text-cyan-100'
                 }`}
@@ -219,7 +219,7 @@ const Index = () => {
             </button>
             <button
               onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${activeSection === 'features'
+              className={`px-2 sm:px-6 py-1.5 sm:py-2 text-xs sm:text-base rounded-full font-medium transition-all duration-300 ${activeSection === 'features'
                 ? 'bg-purple-600/80 text-white'
                 : 'bg-transparent hover:bg-purple-600/20 border border-purple-500/50 text-cyan-100'
                 }`}
@@ -228,7 +228,7 @@ const Index = () => {
             </button>
             <button
               onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${activeSection === 'how-it-works'
+              className={`hidden sm:block px-2 sm:px-6 py-1.5 sm:py-2 text-xs sm:text-base rounded-full font-medium transition-all duration-300 ${activeSection === 'how-it-works'
                 ? 'bg-purple-600/80 text-white'
                 : 'bg-transparent hover:bg-purple-600/20 border border-purple-500/50 text-cyan-100'
                 }`}
@@ -237,7 +237,7 @@ const Index = () => {
             </button>
             <button
               onClick={() => setShowProfile(true)}
-              className="px-6 py-2 rounded-full bg-transparent hover:bg-purple-600/20 border border-purple-500/50 text-cyan-100 font-medium transition-all duration-300"
+              className="px-2 sm:px-6 py-1.5 sm:py-2 text-xs sm:text-base rounded-full bg-transparent hover:bg-purple-600/20 border border-purple-500/50 text-cyan-100 font-medium transition-all duration-300"
             >
               CONTACT
             </button>
@@ -269,7 +269,7 @@ const Index = () => {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="text-6xl md:text-8xl lg:text-9xl font-black mb-6 relative"
+              className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black mb-4 sm:mb-6 relative px-2"
             >
               <span
                 className="bg-gradient-to-r from-purple-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent animate-gradient"
@@ -286,7 +286,7 @@ const Index = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-2xl md:text-4xl text-muted-foreground mb-12 font-light"
+              className="text-lg sm:text-2xl md:text-4xl text-muted-foreground mb-8 sm:mb-12 font-light px-4"
             >
               Watch Together, Chill Together
             </motion.p>
@@ -296,7 +296,7 @@ const Index = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="mb-24 flex flex-col sm:flex-row gap-6 justify-center"
+              className="mb-12 sm:mb-24 flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center px-4"
             >
               <motion.div
                 whileHover={{ y: -10, scale: 1.05 }}
@@ -306,11 +306,11 @@ const Index = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
                 <Button
                   onClick={() => navigate("/room?mode=create")}
-                  className="relative px-12 py-8 text-xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 rounded-2xl shadow-2xl group overflow-hidden"
+                  className="relative w-full sm:w-auto px-8 sm:px-12 py-6 sm:py-8 text-base sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 rounded-2xl shadow-2xl group overflow-hidden"
                 >
                   <span className="relative z-10 flex items-center gap-2">
                     Create Room
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5 group-hover:translate-x-1 transition-transform" />
                   </span>
                   {/* Ripple effect */}
                   <motion.div
@@ -331,11 +331,11 @@ const Index = () => {
                 <Button
                   onClick={() => navigate("/room?mode=join")}
                   variant="outline"
-                  className="relative px-12 py-8 text-xl font-bold border-2 border-cyan-500/70 hover:border-cyan-400 hover:bg-cyan-500/10 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden text-cyan-100"
+                  className="relative w-full sm:w-auto px-8 sm:px-12 py-6 sm:py-8 text-base sm:text-xl font-bold border-2 border-cyan-500/70 hover:border-cyan-400 hover:bg-cyan-500/10 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden text-cyan-100"
                 >
                   <span className="relative z-10 flex items-center gap-2">
                     Join Room
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5 group-hover:translate-x-1 transition-transform" />
                   </span>
                 </Button>
               </motion.div>
@@ -344,17 +344,17 @@ const Index = () => {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="w-full max-w-6xl mx-auto py-24">
+        <section id="features" className="w-full max-w-6xl mx-auto py-12 sm:py-24 px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-5xl font-bold mb-4 text-center bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+            <h2 className="text-3xl sm:text-5xl font-bold mb-3 sm:mb-4 text-center bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
               Features
             </h2>
-            <p className="text-xl text-muted-foreground text-center mb-16">
+            <p className="text-base sm:text-xl text-muted-foreground text-center mb-8 sm:mb-16">
               Everything you need for the perfect watch party
             </p>
 
@@ -415,17 +415,17 @@ const Index = () => {
         </section>
 
         {/* How It Works Section */}
-        <section id="how-it-works" className="w-full max-w-6xl mx-auto py-24">
+        <section id="how-it-works" className="w-full max-w-6xl mx-auto py-12 sm:py-24 px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-5xl font-bold mb-4 text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            <h2 className="text-3xl sm:text-5xl font-bold mb-3 sm:mb-4 text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
               How It Works
             </h2>
-            <p className="text-xl text-muted-foreground text-center mb-16">
+            <p className="text-base sm:text-xl text-muted-foreground text-center mb-8 sm:mb-16">
               Get started in three simple steps
             </p>
 
@@ -462,20 +462,20 @@ const Index = () => {
         </section>
 
         {/* CTA Section */}
-        <section className="w-full max-w-4xl mx-auto py-24">
+        <section className="w-full max-w-4xl mx-auto py-12 sm:py-24 px-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="glass-card p-12 rounded-3xl border border-white/10 text-center relative overflow-hidden"
+            className="glass-card p-6 sm:p-12 rounded-3xl border border-white/10 text-center relative overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-cyan-600/20" />
             <div className="relative z-10">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+              <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
                 Ready to Start Watching?
               </h2>
-              <p className="text-xl text-muted-foreground mb-8">
+              <p className="text-base sm:text-xl text-muted-foreground mb-6 sm:mb-8">
                 Join thousands of users enjoying seamless watch parties
               </p>
               <motion.div
@@ -485,20 +485,20 @@ const Index = () => {
                 <Button
                   onClick={() => navigate("/room?mode=create")}
                   size="lg"
-                  className="px-16 py-8 text-xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 rounded-2xl shadow-2xl"
+                  className="w-full sm:w-auto px-8 sm:px-16 py-6 sm:py-8 text-base sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 rounded-2xl shadow-2xl"
                 >
                   <span className="flex items-center gap-2">
                     Get Started Free
-                    <ArrowRight className="w-6 h-6" />
+                    <ArrowRight className="w-5 sm:w-6 h-5 sm:h-6" />
                   </span>
                 </Button>
               </motion.div>
-              <div className="mt-8 flex items-center justify-center gap-8 text-sm text-muted-foreground">
+              <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-muted-foreground">
                 <span className="flex items-center gap-2">
-                  <Check className="w-5 h-5 text-green-400" /> No signup required
+                  <Check className="w-4 sm:w-5 h-4 sm:h-5 text-green-400" /> No signup required
                 </span>
                 <span className="flex items-center gap-2">
-                  <Check className="w-5 h-5 text-green-400" /> Free forever
+                  <Check className="w-4 sm:w-5 h-4 sm:h-5 text-green-400" /> Free forever
                 </span>
               </div>
             </div>
@@ -508,7 +508,7 @@ const Index = () => {
 
       <ProfilePopup isOpen={showProfile} onClose={() => setShowProfile(false)} />
 
-      <footer className="relative z-20 text-center py-6 text-base text-muted-foreground bg-background/40 backdrop-blur-md border-t border-border/50">
+      <footer className="relative z-20 text-center py-4 sm:py-6 text-xs sm:text-base text-muted-foreground bg-background/40 backdrop-blur-md border-t border-border/50 px-4">
         © 2025 ChillCast | Created by{" "}
         <button
           onClick={() => setShowProfile(true)}
