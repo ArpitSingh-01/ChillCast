@@ -8,8 +8,8 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* ChillCast Dark Theme - Purple, Blue & Black */
-    --background: 0 0% 5%;
+    /* ChillCast Dark Theme - Dynamic colors set by ThemeContext */
+    --background: 250 50% 5%;
     --foreground: 0 0% 98%;
 
     --card: 250 50% 12%;
@@ -18,19 +18,17 @@ All colors MUST be HSL.
     --popover: 250 50% 10%;
     --popover-foreground: 0 0% 98%;
 
-    /* Primary: Electric Purple (#8b5cf6) */
+    /* Primary, Secondary, Accent set dynamically by theme */
     --primary: 260 85% 65%;
     --primary-foreground: 0 0% 100%;
     --primary-glow: 260 85% 75%;
 
-    /* Secondary: Deep Blue (#3b82f6) */
     --secondary: 215 90% 60%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 250 30% 18%;
     --muted-foreground: 250 10% 65%;
 
-    /* Accent: Cyan Blue (#06b6d4) */
     --accent: 190 95% 43%;
     --accent-foreground: 0 0% 100%;
 
@@ -43,16 +41,23 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(260 85% 65%), hsl(215 90% 60%), hsl(190 95% 43%));
-    --gradient-card: linear-gradient(145deg, hsl(250 50% 15% / 0.9), hsl(250 40% 10% / 0.7));
-    --gradient-button: linear-gradient(135deg, hsl(260 85% 65%), hsl(215 90% 60%));
-    --gradient-nebula: radial-gradient(ellipse at center, hsl(260 85% 35% / 0.3) 0%, hsl(215 90% 30% / 0.2) 50%, transparent 100%);
+    /* Galaxy background colors - set dynamically */
+    --galaxy-primary: 260 85% 15%;
+    --galaxy-secondary: 215 90% 15%;
+    --galaxy-accent: 190 95% 20%;
+    
+    /* Star colors - set dynamically */
+    --star-primary: 260 85% 75%;
+    --star-secondary: 215 90% 70%;
+    --star-accent: 190 95% 70%;
+    
+    /* Nebula glow - set dynamically */
+    --nebula-glow: 260 85% 40%;
 
     /* Shadows with glow */
-    --shadow-glow: 0 0 50px hsl(260 85% 65% / 0.4);
-    --shadow-card: 0 20px 60px -10px hsl(260 85% 30% / 0.6);
-    --shadow-blue-glow: 0 0 40px hsl(215 90% 60% / 0.3);
+    --shadow-glow: 0 0 50px hsl(var(--primary) / 0.4);
+    --shadow-card: 0 20px 60px -10px hsl(var(--primary) / 0.6);
+    --shadow-blue-glow: 0 0 40px hsl(var(--secondary) / 0.3);
 
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -70,9 +75,11 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
     font-family: 'Poppins', sans-serif;
     overflow-x: hidden;
+    background: hsl(var(--background));
+    transition: background-color 0.5s ease;
   }
 
-  /* Galaxy Background with Purple/Blue Stars */
+  /* Galaxy Background - Fully Dynamic Based on Theme */
   .galaxy-bg {
     position: fixed;
     top: 0;
@@ -80,11 +87,12 @@ All colors MUST be HSL.
     width: 100%;
     height: 100%;
     background:
-      radial-gradient(ellipse at 20% 30%, hsl(260 85% 15% / 0.4) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 70%, hsl(215 90% 15% / 0.3) 0%, transparent 50%),
-      radial-gradient(ellipse at bottom, hsl(250 40% 8%) 0%, hsl(0 0% 3%) 100%);
+      radial-gradient(ellipse at 20% 30%, hsl(var(--galaxy-primary) / 0.4) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, hsl(var(--galaxy-secondary) / 0.3) 0%, transparent 50%),
+      radial-gradient(ellipse at bottom, hsl(var(--background)) 0%, hsl(0 0% 3%) 100%);
     z-index: -1;
     overflow: hidden;
+    transition: all 0.8s ease;
   }
 
   .galaxy-bg::before {
@@ -95,18 +103,21 @@ All colors MUST be HSL.
     width: 100%;
     height: 100%;
     background-image:
-      radial-gradient(2px 2px at 20% 30%, hsl(260 85% 75%), transparent),
-      radial-gradient(2px 2px at 60% 70%, hsl(215 90% 70%), transparent),
-      radial-gradient(1px 1px at 50% 50%, hsl(190 95% 70%), transparent),
+      radial-gradient(2px 2px at 20% 30%, hsl(var(--star-primary)), transparent),
+      radial-gradient(2px 2px at 60% 70%, hsl(var(--star-secondary)), transparent),
+      radial-gradient(1px 1px at 50% 50%, hsl(var(--star-accent)), transparent),
       radial-gradient(1px 1px at 80% 10%, white, transparent),
-      radial-gradient(2px 2px at 90% 60%, hsl(260 85% 80%), transparent),
-      radial-gradient(1px 1px at 33% 90%, hsl(215 90% 75%), transparent),
-      radial-gradient(1px 1px at 15% 80%, hsl(190 95% 65%), transparent),
-      radial-gradient(3px 3px at 45% 15%, hsl(260 85% 70%), transparent),
-      radial-gradient(1px 1px at 70% 45%, white, transparent);
+      radial-gradient(2px 2px at 90% 60%, hsl(var(--star-primary)), transparent),
+      radial-gradient(1px 1px at 33% 90%, hsl(var(--star-secondary)), transparent),
+      radial-gradient(1px 1px at 15% 80%, hsl(var(--star-accent)), transparent),
+      radial-gradient(3px 3px at 45% 15%, hsl(var(--star-primary)), transparent),
+      radial-gradient(1px 1px at 70% 45%, white, transparent),
+      radial-gradient(2px 2px at 25% 60%, hsl(var(--star-accent)), transparent),
+      radial-gradient(1px 1px at 85% 85%, hsl(var(--star-secondary)), transparent);
     background-size: 250% 250%;
     animation: twinkle 10s ease-in-out infinite;
-    opacity: 0.6;
+    opacity: 0.7;
+    transition: all 0.8s ease;
   }
 
   .galaxy-bg::after {
@@ -117,9 +128,11 @@ All colors MUST be HSL.
     width: 100%;
     height: 100%;
     background:
-      radial-gradient(circle at 30% 40%, hsl(260 85% 40% / 0.15) 0%, transparent 25%),
-      radial-gradient(circle at 70% 60%, hsl(215 90% 40% / 0.12) 0%, transparent 30%);
+      radial-gradient(circle at 30% 40%, hsl(var(--nebula-glow) / 0.2) 0%, transparent 25%),
+      radial-gradient(circle at 70% 60%, hsl(var(--galaxy-secondary) / 0.15) 0%, transparent 30%),
+      radial-gradient(circle at 50% 80%, hsl(var(--galaxy-accent) / 0.12) 0%, transparent 35%);
     animation: nebula 20s ease-in-out infinite;
+    transition: all 0.8s ease;
   }
 
   @keyframes twinkle {
@@ -148,14 +161,15 @@ All colors MUST be HSL.
     }
   }
 
-  /* Glass morphism effect */
+  /* Glass morphism effect - Dynamic */
   .glass-card {
-    background: linear-gradient(145deg, hsl(250 50% 15% / 0.9), hsl(250 40% 10% / 0.7));
+    background: linear-gradient(145deg, hsl(var(--card) / 0.9), hsl(var(--background) / 0.7));
     backdrop-filter: blur(12px);
-    border: 1px solid hsl(260 40% 35% / 0.3);
+    border: 1px solid hsl(var(--primary) / 0.3);
     box-shadow:
       0 8px 32px 0 hsl(0 0% 0% / 0.5),
-      inset 0 1px 1px 0 hsl(260 85% 75% / 0.1);
+      inset 0 1px 1px 0 hsl(var(--primary) / 0.1);
+    transition: all 0.5s ease;
   }
 
   /* 3D Tilt Card Effect */
@@ -183,12 +197,12 @@ All colors MUST be HSL.
   }
 
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, hsl(260 85% 65%), hsl(215 90% 60%));
+    background: linear-gradient(180deg, hsl(var(--primary)), hsl(var(--secondary)));
     border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, hsl(260 85% 75%), hsl(215 90% 70%));
+    background: linear-gradient(180deg, hsl(var(--primary) / 0.9), hsl(var(--secondary) / 0.9));
   }
 
   /* Gradient animation */
@@ -232,5 +246,89 @@ All colors MUST be HSL.
   html, body {
     overflow-x: hidden;
     max-width: 100vw;
+  }
+
+  /* FORCE THEME BUTTON STYLES - Cache buster v2 */
+  .theme-button-dynamic {
+    border-width: 2px !important;
+    border-style: solid !important;
+    border-color: hsl(var(--primary)) !important;
+    background-color: transparent !important;
+    transition: all 0.3s ease !important;
+  }
+
+  .theme-button-dynamic:hover {
+    background-color: hsl(var(--primary) / 0.1) !important;
+  }
+
+  .theme-nav-button {
+    border-width: 1px !important;
+    border-style: solid !important;
+    border-color: hsl(var(--primary) / 0.5) !important;
+    background-color: transparent !important;
+    color: hsl(var(--foreground)) !important;
+    transition: all 0.3s ease !important;
+  }
+
+  .theme-nav-button:hover {
+    background-color: hsl(var(--primary) / 0.2) !important;
+  }
+
+  .theme-nav-button-active {
+    background-color: hsl(var(--primary) / 0.8) !important;
+    color: white !important;
+    border: none !important;
+  }
+
+  /* Dynamic Theme Gradient Classes */
+  .theme-gradient-text {
+    background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--secondary)));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: all 0.5s ease;
+  }
+
+  .theme-gradient-text-animated {
+    background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--secondary)));
+    background-size: 200% 200%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 4s ease infinite;
+    transition: all 0.5s ease;
+  }
+
+  .theme-gradient-bg {
+    background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--secondary)));
+    transition: all 0.5s ease;
+  }
+
+  .theme-gradient-bg-glow {
+    background: linear-gradient(to right, hsl(var(--primary) / 0.2), hsl(var(--secondary) / 0.2));
+    transition: all 0.5s ease;
+  }
+
+  .theme-gradient-border {
+    border-image: linear-gradient(to right, hsl(var(--primary)), hsl(var(--secondary))) 1;
+    transition: all 0.5s ease;
+  }
+
+  .theme-button-gradient {
+    background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--secondary)));
+    transition: all 0.5s ease;
+  }
+
+  .theme-button-gradient:hover {
+    background: linear-gradient(to right, hsl(var(--primary) / 0.9), hsl(var(--secondary) / 0.9));
+  }
+
+  .theme-glow-box {
+    box-shadow: 0 0 40px hsl(var(--primary) / 0.5);
+    transition: all 0.5s ease;
+  }
+
+  .theme-glow-box:hover {
+    box-shadow: 0 0 60px hsl(var(--primary) / 0.7);
   }
 }

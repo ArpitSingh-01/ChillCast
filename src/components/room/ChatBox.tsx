@@ -56,7 +56,6 @@ const ChatBox = ({ roomId, nickname, privateRecipient }: ChatBoxProps) => {
         .order("created_at", { ascending: false });
 
       if (error) {
-        console.error("Error fetching private chats:", error);
         return;
       }
 
@@ -89,7 +88,7 @@ const ChatBox = ({ roomId, nickname, privateRecipient }: ChatBoxProps) => {
         .order("created_at", { ascending: true });
 
       if (error) {
-        console.error("Error fetching messages:", error);
+        // Silently handle error
       } else {
         setMessages(data || []);
       }
@@ -149,7 +148,6 @@ const ChatBox = ({ roomId, nickname, privateRecipient }: ChatBoxProps) => {
 
     if (error) {
       toast.error("Failed to send message");
-      console.error("Error sending message:", error);
     } else {
       setNewMessage("");
     }

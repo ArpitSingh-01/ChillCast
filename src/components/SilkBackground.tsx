@@ -18,6 +18,28 @@ const SilkBackground = () => {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
+    // Get theme colors from CSS variables
+    const getThemeColors = () => {
+      const root = document.documentElement;
+      const primary = getComputedStyle(root).getPropertyValue('--primary').trim();
+      const secondary = getComputedStyle(root).getPropertyValue('--secondary').trim();
+      const accent = getComputedStyle(root).getPropertyValue('--accent').trim();
+      
+      return {
+        primary: `hsla(${primary}, 0.1)`,
+        secondary: `hsla(${secondary}, 0.08)`,
+        accent: `hsla(${accent}, 0.06)`,
+      };
+    };
+
+    let colors = getThemeColors();
+
+    // Watch for theme changes
+    const observer = new MutationObserver(() => {
+      colors = getThemeColors();
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['style'] });
+
     // Silk wave animation
     let time = 0;
     const waves: Array<{
@@ -25,11 +47,11 @@ const SilkBackground = () => {
       frequency: number;
       phase: number;
       speed: number;
-      color: string;
+      colorKey: 'primary' | 'secondary' | 'accent';
     }> = [
-        { amplitude: 100, frequency: 0.002, phase: 0, speed: 0.02, color: 'rgba(147, 51, 234, 0.1)' },
-        { amplitude: 80, frequency: 0.003, phase: Math.PI / 2, speed: 0.015, color: 'rgba(168, 85, 247, 0.08)' },
-        { amplitude: 120, frequency: 0.0015, phase: Math.PI, speed: 0.025, color: 'rgba(192, 132, 252, 0.06)' },
+        { amplitude: 100, frequency: 0.002, phase: 0, speed: 0.02, colorKey: 'primary' },
+        { amplitude: 80, frequency: 0.003, phase: Math.PI / 2, speed: 0.015, colorKey: 'secondary' },
+        { amplitude: 120, frequency: 0.0015, phase: Math.PI, speed: 0.025, colorKey: 'accent' },
       ];
 
     const animate = () => {
@@ -51,7 +73,7 @@ const SilkBackground = () => {
         ctx.lineTo(0, canvas.height);
         ctx.closePath();
 
-        ctx.fillStyle = wave.color;
+        ctx.fillStyle = colors[wave.colorKey];
         ctx.fill();
       });
 
@@ -63,16 +85,17 @@ const SilkBackground = () => {
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
+      observer.disconnect();
     };
   }, []);
 
   return (
     <>
-      <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900" />
+      <div className="galaxy-bg" />
       <canvas
         ref={canvasRef}
-        className="fixed inset-0 w-full h-full"
-        style={{ mixBlendMode: 'screen' }}
+        className="fixed inset-0 w-full h-full pointer-events-none"
+        style={{ mixBlendMode: 'screen', zIndex: 0 }}
       />
     </>
   );

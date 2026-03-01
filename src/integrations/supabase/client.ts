@@ -2,6 +2,7 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
+// Force production URL - DO NOT use localhost
 const SUPABASE_URL = "https://bvtpwflhburnlkwbvnsy.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2dHB3ZmxoYnVybmxrd2J2bnN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5MjU1MDgsImV4cCI6MjA3NzUwMTUwOH0.g-kEUiyR6KmTnOZ63-dpijrqduIXJ57AX69sfn5zRbc";
 
@@ -13,5 +14,10 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     storage: localStorage,
     persistSession: true,
     autoRefreshToken: true,
+  },
+  global: {
+    headers: {
+      'X-Client-Info': 'chillcast-web'
+    }
   }
 });

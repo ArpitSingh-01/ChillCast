@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import SilkBackground from "@/components/SilkBackground";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 import MediaPlayer from "@/components/room/MediaPlayer";
 import ChatBox from "@/components/room/ChatBox";
 import MembersList from "@/components/room/MembersList";
@@ -15,6 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import bcrypt from "bcryptjs";
 import { ArrowLeft, MessageCircle, Users } from "lucide-react";
+import { useTheme, themes } from "@/contexts/ThemeContext";
 
 const Room = () => {
   const navigate = useNavigate();
@@ -34,6 +36,8 @@ const Room = () => {
   const [privateRecipient, setPrivateRecipient] = useState<string | null>(null);
   const [sessionId] = useState<string>(() => crypto.randomUUID());
   const [activeTab, setActiveTab] = useState<string>("chat");
+  const { theme } = useTheme();
+  const currentTheme = themes[theme];
 
   useEffect(() => {
     const modeParam = searchParams.get("mode");
@@ -50,59 +54,64 @@ const Room = () => {
   }, [searchParams]);
 
   const createRoom = async () => {
-    if (!hostName || !hostPassword) {
-      toast.error("Please enter host name and password");
-      return;
-    }
-
-    const hashedPassword = await bcrypt.hash(hostPassword, 10);
-    const hashedRoomPassword = roomPassword ? await bcrypt.hash(roomPassword, 10) : null;
-
-    // Get user's IP address (optional)
-    let userIP = null;
     try {
-      const ipResponse = await fetch('https://api.ipify.org?format=json');
-      const ipData = await ipResponse.json();
-      userIP = ipData.ip;
-    } catch (error) {
-      console.log("Could not fetch IP address");
+      if (!hostName || !hostPassword) {
+        toast.error("Please enter host name and password");
+        return;
+      }
+
+      const hashedPassword = await bcrypt.hash(hostPassword, 10);
+      const hashedRoomPassword = roomPassword ? await bcrypt.hash(roomPassword, 10) : null;
+
+      // Get user's IP address (optional) - don't let this block room creation
+      let userIP = null;
+      try {
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipResponse.json();
+        userIP = ipData.ip;
+      } catch (error) {
+        // Silently fail - IP is optional
+      }
+
+      const { data, error } = await supabase
+        .from("rooms")
+        .insert({
+          host_name: hostName,
+          host_password: hashedPassword,
+          room_password: hashedRoomPassword,
+          host_ip: userIP,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        toast.error(`Failed to create room: ${error.message}`);
+        return;
+      }
+
+      const { error: memberError } = await supabase.from("members").insert({
+        room_id: data.id,
+        nickname: hostName,
+        is_online: true,
+        session_id: sessionId,
+      });
+
+      if (memberError) {
+        toast.error(`Failed to add host as member: ${memberError.message}`);
+        return;
+      }
+
+      setRoomId(data.id);
+      setRoomCode(data.room_code);
+      setNickname(hostName);
+      setIsHost(true);
+      setMode("room");
+      toast.success(`Room created! Room Code: ${data.room_code}`);
+    } catch (error: any) {
+      toast.error(`Unexpected error: ${error?.message || 'Unknown error occurred'}`);
     }
-
-    const { data, error } = await supabase
-      .from("rooms")
-      .insert({
-        host_name: hostName,
-        host_password: hashedPassword,
-        room_password: hashedRoomPassword,
-        host_ip: userIP,
-      })
-      .select()
-      .single();
-
-    if (error) {
-      toast.error("Failed to create room");
-      console.error(error);
-      return;
-    }
-
-    const { error: memberError } = await supabase.from("members").insert({
-      room_id: data.id,
-      nickname: hostName,
-      is_online: true,
-      session_id: sessionId,
-    });
-
-    if (memberError) {
-      console.error("Error adding host as member:", memberError);
-    }
-
-    setRoomId(data.id);
-    setRoomCode(data.room_code);
-    setNickname(hostName);
-    setIsHost(true);
-    setMode("room");
-    toast.success(`Room created! Room Code: ${data.room_code}`);
   };
+
 
   const joinRoom = async () => {
     // Rejoin as host validation
@@ -140,7 +149,6 @@ const Room = () => {
 
       if (memberError) {
         toast.error("Failed to rejoin as host");
-        console.error(memberError);
         return;
       }
 
@@ -188,7 +196,6 @@ const Room = () => {
 
     if (memberError) {
       toast.error("Failed to join room");
-      console.error(memberError);
       return;
     }
 
@@ -289,6 +296,7 @@ const Room = () => {
             </div>
           </div>
         </div>
+        <ThemeSwitcher />
       </div>
     );
   }
@@ -296,6 +304,7 @@ const Room = () => {
   return (
     <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4">
       <SilkBackground />
+      <ThemeSwitcher />
 
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
@@ -313,7 +322,7 @@ const Room = () => {
             Back to Home
           </Button>
 
-          <h1 className="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          <h1 className={`text-3xl font-bold mb-6 text-center bg-gradient-to-r ${currentTheme.gradient} bg-clip-text text-transparent`}>
             {mode === "create" ? "Create Room" : "Join Room"}
           </h1>
 

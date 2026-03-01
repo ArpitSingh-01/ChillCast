@@ -45,11 +45,9 @@ const YouTubePlayer = ({ roomId, isHost }: YouTubePlayerProps) => {
 
   const onPlayerReady: YouTubeProps["onReady"] = (event) => {
     playerRef.current = event.target;
-    console.log(`[${isHost ? 'HOST' : 'MEMBER'}] Player ready`);
     
     // Apply initial state if available (for members joining mid-video)
     if (initialState && !isHost) {
-      console.log(`[MEMBER] Applying initial state:`, initialState);
       setTimeout(() => {
         try {
           event.target.seekTo(initialState.time, true);
@@ -57,9 +55,8 @@ const YouTubePlayer = ({ roomId, isHost }: YouTubePlayerProps) => {
             event.target.playVideo();
             setIsPlaying(true);
           }
-          console.log(`[MEMBER] ✅ Applied initial state: time=${initialState.time}s, playing=${initialState.playing}`);
         } catch (error) {
-          console.error("[MEMBER] ❌ Error applying initial state:", error);
+          // Silently handle error
         }
       }, 500);
       setInitialState(null);
@@ -72,8 +69,6 @@ const YouTubePlayer = ({ roomId, isHost }: YouTubePlayerProps) => {
     const currentTime = Math.floor(playerRef.current.getCurrentTime());
     const newPlayState = !isPlaying;
     
-    console.log(`[HOST] ${newPlayState ? '▶️ Playing' : '⏸️ Pausing'} at ${currentTime}s`);
-    
     setIsPlaying(newPlayState);
     
     if (newPlayState) {
@@ -82,16 +77,10 @@ const YouTubePlayer = ({ roomId, isHost }: YouTubePlayerProps) => {
       playerRef.current.pauseVideo();
     }
 
-    const { error } = await supabase
+    await supabase
       .from("rooms")
       .update({ is_playing: newPlayState, video_play_time: currentTime })
       .eq("id", roomId);
-    
-    if (error) {
-      console.error("[HOST] ❌ Error updating play state:", error);
-    } else {
-      console.log(`[HOST] ✅ Updated DB: is_playing=${newPlayState}, video_play_time=${currentTime}`);
-    }
   };
 
   const handleSeek = async (seconds: number) => {
@@ -100,39 +89,24 @@ const YouTubePlayer = ({ roomId, isHost }: YouTubePlayerProps) => {
     const currentTime = Math.floor(playerRef.current.getCurrentTime());
     const newTime = Math.max(0, currentTime + seconds);
     
-    console.log(`[HOST] ⏩ Seeking from ${currentTime}s to ${newTime}s`);
-    
     playerRef.current.seekTo(newTime);
     
-    const { error } = await supabase
+    await supabase
       .from("rooms")
       .update({ video_play_time: newTime })
       .eq("id", roomId);
-    
-    if (error) {
-      console.error("[HOST] ❌ Error updating seek time:", error);
-    } else {
-      console.log(`[HOST] ✅ Updated DB: video_play_time=${newTime}`);
-    }
   };
 
   // Fetch initial state on mount
   useEffect(() => {
     const fetchInitialState = async () => {
-      console.log(`[${isHost ? 'HOST' : 'MEMBER'}] Fetching initial room state...`);
-      
       const { data: room, error } = await supabase
         .from("rooms")
         .select("yt_video_url, video_play_time, is_playing")
         .eq("id", roomId)
         .single();
       
-      if (error) {
-        console.error(`[${isHost ? 'HOST' : 'MEMBER'}] ❌ Error fetching initial state:`, error);
-        return;
-      }
-      
-      console.log(`[${isHost ? 'HOST' : 'MEMBER'}] Room state:`, room);
+      if (error) return;
       
       if (room?.yt_video_url) {
         const id = extractVideoId(room.yt_video_url);
@@ -146,7 +120,6 @@ const YouTubePlayer = ({ roomId, isHost }: YouTubePlayerProps) => {
               playing: room.is_playing || false
             };
             setInitialState(state);
-            console.log(`[MEMBER] 📦 Stored initial state for player ready:`, state);
           }
         }
       }
@@ -157,38 +130,25 @@ const YouTubePlayer = ({ roomId, isHost }: YouTubePlayerProps) => {
 
   // Host: Periodic time updates while playing
   useEffect(() => {
-    if (!isHost || !isPlaying || !playerRef.current) {
-      console.log(`[HOST] Periodic updates ${!isHost ? 'disabled (not host)' : !isPlaying ? 'disabled (not playing)' : 'disabled (no player)'}`);
-      return;
-    }
-    
-    console.log("[HOST] 🔄 Starting periodic time updates (every 3s)");
+    if (!isHost || !isPlaying || !playerRef.current) return;
     
     const interval = setInterval(async () => {
       try {
         if (!playerRef.current) return;
         const currentTime = Math.floor(playerRef.current.getCurrentTime());
-        console.log(`[HOST] ⏱️ Periodic update: ${currentTime}s`);
         
-        const { error } = await supabase
+        await supabase
           .from("rooms")
           .update({ video_play_time: currentTime })
           .eq("id", roomId);
-        
-        if (error) {
-          console.error("[HOST] ❌ Error in periodic update:", error);
-        } else {
-          console.log(`[HOST] ✅ Periodic update sent: ${currentTime}s`);
-        }
       } catch (error) {
-        console.error("[HOST] ❌ Exception in periodic update:", error);
+        // Silently handle error
       }
     }, 3000);
     
     timeUpdateIntervalRef.current = interval;
     return () => {
       if (timeUpdateIntervalRef.current) {
-        console.log("[HOST] 🛑 Stopping periodic time updates");
         clearInterval(timeUpdateIntervalRef.current);
       }
     };
@@ -196,12 +156,7 @@ const YouTubePlayer = ({ roomId, isHost }: YouTubePlayerProps) => {
 
   // Member: Continuous sync check
   useEffect(() => {
-    if (isHost || !playerRef.current || !videoId) {
-      console.log(`[MEMBER] Sync check ${isHost ? 'disabled (is host)' : !playerRef.current ? 'disabled (no player)' : 'disabled (no video)'}`);
-      return;
-    }
-    
-    console.log("[MEMBER] 🔄 Starting continuous sync check (every 10s)");
+    if (isHost || !playerRef.current || !videoId) return;
     
     const syncCheck = setInterval(async () => {
       try {
@@ -211,23 +166,15 @@ const YouTubePlayer = ({ roomId, isHost }: YouTubePlayerProps) => {
           .eq("id", roomId)
           .single();
         
-        if (error) {
-          console.error("[MEMBER] ❌ Error in sync check:", error);
-          return;
-        }
-          
-        if (!room || !playerRef.current) return;
+        if (error || !room || !playerRef.current) return;
         
         const currentTime = Math.floor(playerRef.current.getCurrentTime());
         const serverTime = room.video_play_time || 0;
         const playerState = playerRef.current.getPlayerState();
         const drift = Math.abs(currentTime - serverTime);
         
-        console.log(`[MEMBER] 🔍 Sync check: local=${currentTime}s, server=${serverTime}s, drift=${drift}s, playerState=${playerState}, serverPlaying=${room.is_playing}`);
-        
         // Sync time if drift is more than 3 seconds
         if (drift > 3) {
-          console.log(`[MEMBER] ⚠️ Drift detected (${drift}s), syncing to ${serverTime}s`);
           setIsSyncing(true);
           playerRef.current.seekTo(serverTime, true);
           setTimeout(() => setIsSyncing(false), 1000);
@@ -235,23 +182,20 @@ const YouTubePlayer = ({ roomId, isHost }: YouTubePlayerProps) => {
         
         // Sync play/pause state (1 = playing, 2 = paused)
         if (room.is_playing && playerState !== 1) {
-          console.log(`[MEMBER] ▶️ Server is playing, starting playback`);
           playerRef.current.playVideo();
           setIsPlaying(true);
         } else if (!room.is_playing && playerState === 1) {
-          console.log(`[MEMBER] ⏸️ Server is paused, pausing playback`);
           playerRef.current.pauseVideo();
           setIsPlaying(false);
         }
       } catch (error) {
-        console.error("[MEMBER] ❌ Exception in sync check:", error);
+        // Silently handle error
       }
     }, 10000);
     
     syncCheckIntervalRef.current = syncCheck;
     return () => {
       if (syncCheckIntervalRef.current) {
-        console.log("[MEMBER] 🛑 Stopping continuous sync check");
         clearInterval(syncCheckIntervalRef.current);
       }
     };
@@ -259,8 +203,6 @@ const YouTubePlayer = ({ roomId, isHost }: YouTubePlayerProps) => {
 
   // Real-time subscription for immediate updates
   useEffect(() => {
-    console.log(`[${isHost ? 'HOST' : 'MEMBER'}] Setting up real-time subscription...`);
-    
     const channel = supabase
       .channel(`room-${roomId}`)
       .on(
@@ -272,14 +214,12 @@ const YouTubePlayer = ({ roomId, isHost }: YouTubePlayerProps) => {
           filter: `id=eq.${roomId}`,
         },
         (payload: any) => {
-          console.log(`[${isHost ? 'HOST' : 'MEMBER'}] 📨 Realtime UPDATE event:`, payload);
           const room = payload.new;
           
           // Video URL changed
           if (room.yt_video_url && room.yt_video_url !== videoUrl) {
             const id = extractVideoId(room.yt_video_url);
             if (id) {
-              console.log(`[${isHost ? 'HOST' : 'MEMBER'}] 🎬 New video URL detected:`, room.yt_video_url);
               setVideoId(id);
               setVideoUrl(room.yt_video_url);
               toast.success("New video loaded");
@@ -288,47 +228,36 @@ const YouTubePlayer = ({ roomId, isHost }: YouTubePlayerProps) => {
 
           // Sync for members only
           if (!isHost && playerRef.current) {
-            console.log(`[MEMBER] 🔄 Processing sync from realtime update...`);
-            
             if (syncTimeoutRef.current) {
               clearTimeout(syncTimeoutRef.current);
             }
 
             syncTimeoutRef.current = setTimeout(() => {
               try {
-                if (!playerRef.current) {
-                  console.log("[MEMBER] ⚠️ Player not ready for sync");
-                  return;
-                }
+                if (!playerRef.current) return;
                 
                 setIsSyncing(true);
                 const currentTime = Math.floor(playerRef.current.getCurrentTime());
                 const serverTime = room.video_play_time || 0;
                 const drift = Math.abs(currentTime - serverTime);
                 
-                console.log(`[MEMBER] 📊 Sync state: local=${currentTime}s, server=${serverTime}s, drift=${drift}s`);
-                
                 // Sync time if difference is more than 2 seconds
                 if (drift > 2) {
                   playerRef.current.seekTo(serverTime, true);
-                  console.log(`[MEMBER] ⏩ Synced time to ${serverTime}s`);
                 }
 
                 // Sync play/pause state
                 const playerState = playerRef.current.getPlayerState();
-                console.log(`[MEMBER] 🎮 Player state: ${playerState}, Server playing: ${room.is_playing}`);
                 
                 if (room.is_playing && playerState !== 1) {
                   playerRef.current.playVideo();
                   setIsPlaying(true);
-                  console.log("[MEMBER] ▶️ Synced to PLAY");
                 } else if (!room.is_playing && playerState === 1) {
                   playerRef.current.pauseVideo();
                   setIsPlaying(false);
-                  console.log("[MEMBER] ⏸️ Synced to PAUSE");
                 }
               } catch (error) {
-                console.error("[MEMBER] ❌ Error syncing video:", error);
+                // Silently handle error
               } finally {
                 setTimeout(() => setIsSyncing(false), 500);
               }
@@ -337,11 +266,7 @@ const YouTubePlayer = ({ roomId, isHost }: YouTubePlayerProps) => {
         }
       )
       .subscribe((status) => {
-        console.log(`[${isHost ? 'HOST' : 'MEMBER'}] Subscription status:`, status);
-        if (status === "SUBSCRIBED") {
-          console.log(`[${isHost ? 'HOST' : 'MEMBER'}] ✅ Connected to room updates`);
-        } else if (status === "CHANNEL_ERROR") {
-          console.error(`[${isHost ? 'HOST' : 'MEMBER'}] ❌ Channel error, attempting to reconnect...`);
+        if (status === "CHANNEL_ERROR") {
           toast.error("Connection issue - attempting to reconnect...");
         }
       });

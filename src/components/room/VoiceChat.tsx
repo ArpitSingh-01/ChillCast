@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Mic, MicOff, Volume2, VolumeX } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { logger } from "@/lib/logger";
 
 interface VoiceChatProps {
     roomId: string;
@@ -65,7 +66,7 @@ const VoiceChat = ({ roomId, nickname, sessionId }: VoiceChatProps) => {
     const createPeerConnection = useCallback((peerId: string, peerNickname: string): RTCPeerConnection => {
         const existing = peerConnectionsRef.current.get(peerId);
         if (existing) {
-            console.log("♻️ Reusing existing peer connection for", peerNickname);
+            logger.log("♻️ Reusing existing peer connection for", peerNickname);
             return existing.connection;
         }
 
@@ -74,7 +75,7 @@ const VoiceChat = ({ roomId, nickname, sessionId }: VoiceChatProps) => {
         if (localStreamRef.current) {
             localStreamRef.current.getTracks().forEach(track => {
                 pc.addTrack(track, localStreamRef.current!);
-                console.log("🎵 Added local track to peer connection");
+                logger.log("🎵 Added local track to peer connection");
             });
         }
 
@@ -84,17 +85,17 @@ const VoiceChat = ({ roomId, nickname, sessionId }: VoiceChatProps) => {
         document.body.appendChild(audioElement);
 
         pc.ontrack = (event) => {
-            console.log("🎵 Received remote track from", peerNickname);
+            logger.log("🎵 Received remote track from", peerNickname);
             audioElement.srcObject = event.streams[0];
             audioElement.muted = isDeafened;
             audioElement.volume = 1.0;
 
             audioElement.play().then(() => {
-                console.log("✅ Audio playback started for", peerNickname);
+                logger.log("✅ Audio playback started for", peerNickname);
             }).catch(err => {
-                console.error("❌ Error playing audio:", err);
+                logger.error("❌ Error playing audio:", err);
                 toast.error("Click anywhere to enable voice chat audio", { id: "audio-autoplay" });
-                document.addEventListener('click', () => audioElement.play().catch(console.error), { once: true });
+                document.addEventListener('click', () => audioElement.play().catch(logger.error), { once: true });
             });
         };
 
@@ -114,7 +115,7 @@ const VoiceChat = ({ roomId, nickname, sessionId }: VoiceChatProps) => {
         };
 
         pc.onconnectionstatechange = () => {
-            console.log(`Connection state with ${peerNickname}:`, pc.connectionState);
+            logger.log(`Connection state with ${peerNickname}:`, pc.connectionState);
             if (pc.connectionState === "connected") {
                 setConnectedPeers(prev => {
                     if (prev.includes(peerNickname)) return prev;
@@ -122,7 +123,7 @@ const VoiceChat = ({ roomId, nickname, sessionId }: VoiceChatProps) => {
                 });
                 toast.success(`Connected to ${peerNickname}`);
             } else if (pc.connectionState === "failed") {
-                console.error(`Connection failed with ${peerNickname}`);
+                logger.error(`Connection failed with ${peerNickname}`);
                 pc.restartIce();
             } else if (pc.connectionState === "disconnected") {
                 setTimeout(() => {
@@ -143,7 +144,7 @@ const VoiceChat = ({ roomId, nickname, sessionId }: VoiceChatProps) => {
         try {
             const existing = peerConnectionsRef.current.get(peerId);
             if (existing && existing.connection.connectionState !== "failed" && existing.connection.connectionState !== "closed") {
-                console.log("⏭️ Skipping offer creation, connection already exists");
+                logger.log("⏭️ Skipping offer creation, connection already exists");
                 return;
             }
 
@@ -166,10 +167,10 @@ const VoiceChat = ({ roomId, nickname, sessionId }: VoiceChatProps) => {
                         offer: pc.localDescription,
                     },
                 });
-                console.log("📤 Sent offer to", peerNickname);
+                logger.log("📤 Sent offer to", peerNickname);
             }
         } catch (error) {
-            console.error("Error creating offer:", error);
+            logger.error("Error creating offer:", error);
         }
     }, [sessionId, nickname, createPeerConnection]);
 
@@ -179,18 +180,18 @@ const VoiceChat = ({ roomId, nickname, sessionId }: VoiceChatProps) => {
 
             if (!pc.currentRemoteDescription) {
                 await pc.setRemoteDescription(new RTCSessionDescription(offer));
-                console.log("📥 Set remote description from", peerNickname);
+                logger.log("📥 Set remote description from", peerNickname);
             }
 
             // Process pending ICE candidates after setting remote description
             const pending = pendingIceCandidatesRef.current.get(peerId);
             if (pending && pending.length > 0) {
-                console.log(`🧊 Processing ${pending.length} pending ICE candidates (offer)`);
+                logger.log(`🧊 Processing ${pending.length} pending ICE candidates (offer)`);
                 for (const candidate of pending) {
                     try {
                         await pc.addIceCandidate(new RTCIceCandidate(candidate));
                     } catch (e) {
-                        console.error("Error adding pending ICE candidate:", e);
+                        logger.error("Error adding pending ICE candidate:", e);
                     }
                 }
                 pendingIceCandidatesRef.current.delete(peerId);
@@ -211,10 +212,10 @@ const VoiceChat = ({ roomId, nickname, sessionId }: VoiceChatProps) => {
                         answer: pc.localDescription,
                     },
                 });
-                console.log("📤 Sent answer to", peerNickname);
+                logger.log("📤 Sent answer to", peerNickname);
             }
         } catch (error) {
-            console.error("Error handling offer:", error);
+            logger.error("Error handling offer:", error);
         }
     }, [sessionId, nickname, createPeerConnection]);
 
@@ -223,24 +224,24 @@ const VoiceChat = ({ roomId, nickname, sessionId }: VoiceChatProps) => {
             const peer = peerConnectionsRef.current.get(peerId);
             if (peer) {
                 await peer.connection.setRemoteDescription(new RTCSessionDescription(answer));
-                console.log("📥 Set remote description (answer)");
+                logger.log("📥 Set remote description (answer)");
 
                 // Process pending ICE candidates after setting remote description
                 const pending = pendingIceCandidatesRef.current.get(peerId);
                 if (pending && pending.length > 0) {
-                    console.log(`🧊 Processing ${pending.length} pending ICE candidates (answer)`);
+                    logger.log(`🧊 Processing ${pending.length} pending ICE candidates (answer)`);
                     for (const candidate of pending) {
                         try {
                             await peer.connection.addIceCandidate(new RTCIceCandidate(candidate));
                         } catch (e) {
-                            console.error("Error adding pending ICE candidate:", e);
+                            logger.error("Error adding pending ICE candidate:", e);
                         }
                     }
                     pendingIceCandidatesRef.current.delete(peerId);
                 }
             }
         } catch (error) {
-            console.error("Error handling answer:", error);
+            logger.error("Error handling answer:", error);
         }
     }, []);
 
@@ -255,54 +256,54 @@ const VoiceChat = ({ roomId, nickname, sessionId }: VoiceChatProps) => {
                 pendingIceCandidatesRef.current.set(peerId, pending);
             }
         } catch (error) {
-            console.error("Error handling ICE candidate:", error);
+            logger.error("Error handling ICE candidate:", error);
         }
     }, []);
 
     const handleSignal = useCallback(async ({ payload }: any) => {
-        console.log("📨 RAW SIGNAL RECEIVED:", JSON.stringify(payload));
+        logger.log("📨 RAW SIGNAL RECEIVED:", JSON.stringify(payload));
 
         const { type, from, to, nickname: peerNickname, offer, answer, candidate } = payload;
 
         if (to && to !== sessionId) {
-            console.log("⏭️ Ignoring signal not for us (to:", to, "us:", sessionId, ")");
+            logger.log("⏭️ Ignoring signal not for us (to:", to, "us:", sessionId, ")");
             return;
         }
         if (from === sessionId) {
-            console.log("⏭️ Ignoring our own signal");
+            logger.log("⏭️ Ignoring our own signal");
             return;
         }
 
-        console.log("✅ Processing signal:", type, "from", peerNickname || from);
+        logger.log("✅ Processing signal:", type, "from", peerNickname || from);
 
         switch (type) {
             case "join":
-                console.log("👋 Peer joined:", peerNickname);
+                logger.log("👋 Peer joined:", peerNickname);
                 await createOffer(from, peerNickname);
                 break;
             case "offer":
-                console.log("📥 Received offer from:", peerNickname);
+                logger.log("📥 Received offer from:", peerNickname);
                 await handleOffer(from, peerNickname, offer);
                 break;
             case "answer":
-                console.log("📥 Received answer from:", from);
+                logger.log("📥 Received answer from:", from);
                 await handleAnswer(from, answer);
                 break;
             case "ice-candidate":
-                console.log("🧊 Received ICE candidate from:", from);
+                logger.log("🧊 Received ICE candidate from:", from);
                 await handleIceCandidate(from, candidate);
                 break;
             case "leave":
-                console.log("👋 Peer left:", from);
+                logger.log("👋 Peer left:", from);
                 removePeer(from);
                 break;
             default:
-                console.warn("Unknown signal type:", type);
+                logger.warn("Unknown signal type:", type);
         }
     }, [sessionId, createOffer, handleOffer, handleAnswer, handleIceCandidate, removePeer]);
 
     const initializeVoiceChat = useCallback(async () => {
-        console.log("🎤 Initializing voice chat for", nickname, "in room", roomId, "sessionId:", sessionId);
+        logger.log("🎤 Initializing voice chat for", nickname, "in room", roomId, "sessionId:", sessionId);
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
                 audio: {
@@ -312,35 +313,35 @@ const VoiceChat = ({ roomId, nickname, sessionId }: VoiceChatProps) => {
                 }
             });
             localStreamRef.current = stream;
-            console.log("✅ Microphone access granted");
+            logger.log("✅ Microphone access granted");
 
             stream.getAudioTracks().forEach(track => {
                 track.enabled = false;
-                console.log("🔇 Microphone muted by default");
+                logger.log("🔇 Microphone muted by default");
             });
 
             const channelName = `voice:${roomId}`;
-            console.log("📡 Creating channel:", channelName);
+            logger.log("📡 Creating channel:", channelName);
 
             const channel = supabase.channel(channelName);
 
             channel
                 .on("broadcast", { event: "voice-signal" }, (msg) => {
-                    console.log("📨 Broadcast message received on channel");
+                    logger.log("📨 Broadcast message received on channel");
                     handleSignal(msg);
                 })
                 .subscribe(async (status, err) => {
-                    console.log("📡 Channel subscription status:", status);
+                    logger.log("📡 Channel subscription status:", status);
 
                     if (err) {
-                        console.error("❌ Channel subscription error:", err);
+                        logger.error("❌ Channel subscription error:", err);
                         toast.error("Voice chat connection error");
                         return;
                     }
 
                     if (status === "SUBSCRIBED") {
-                        console.log("✅ Successfully subscribed to channel:", channelName);
-                        console.log("📢 Announcing presence to room");
+                        logger.log("✅ Successfully subscribed to channel:", channelName);
+                        logger.log("📢 Announcing presence to room");
 
                         setTimeout(async () => {
                             const joinMsg = {
@@ -352,18 +353,18 @@ const VoiceChat = ({ roomId, nickname, sessionId }: VoiceChatProps) => {
                                     nickname,
                                 },
                             };
-                            console.log("📤 Sending join message:", JSON.stringify(joinMsg));
+                            logger.log("📤 Sending join message:", JSON.stringify(joinMsg));
                             const result = await channel.send(joinMsg);
-                            console.log("📤 Join message result:", result);
+                            logger.log("📤 Join message result:", result);
                         }, 500);
                     }
                 });
 
             channelRef.current = channel;
             toast.success("Voice chat ready");
-            console.log("✅ Voice chat initialized successfully");
+            logger.log("✅ Voice chat initialized successfully");
         } catch (error) {
-            console.error("❌ Error initializing voice chat:", error);
+            logger.error("❌ Error initializing voice chat:", error);
             toast.error("Could not access microphone");
         }
     }, [roomId, nickname, sessionId, handleSignal]);
@@ -421,7 +422,7 @@ const VoiceChat = ({ roomId, nickname, sessionId }: VoiceChatProps) => {
 
         peerConnectionsRef.current.forEach(({ audioElement }) => {
             audioElement.muted = newDeafenState;
-            console.log(`${newDeafenState ? '🔇' : '🔊'} ${newDeafenState ? 'Muted' : 'Unmuted'} audio from peer`);
+            logger.log(`${newDeafenState ? '🔇' : '🔊'} ${newDeafenState ? 'Muted' : 'Unmuted'} audio from peer`);
         });
 
         if (newDeafenState && localStreamRef.current) {
@@ -486,3 +487,4 @@ const VoiceChat = ({ roomId, nickname, sessionId }: VoiceChatProps) => {
 };
 
 export default VoiceChat;
+

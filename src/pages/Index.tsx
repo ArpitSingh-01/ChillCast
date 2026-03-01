@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import SilkBackground from "@/components/SilkBackground";
 import ProfilePopup from "@/components/ProfilePopup";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { Button } from "@/components/ui/button";
 import { Play, Users, MessageCircle, Share2, Lock, Mic, ArrowRight, Check, Sparkles } from "lucide-react";
 
@@ -198,7 +199,7 @@ const Index = () => {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent"
+            className="text-lg sm:text-2xl font-bold theme-gradient-text"
           >
             ✨ ChillCast
           </motion.div>
@@ -211,8 +212,8 @@ const Index = () => {
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               className={`px-2 sm:px-6 py-1.5 sm:py-2 text-xs sm:text-base rounded-full font-medium transition-all duration-300 ${activeSection === 'home'
-                ? 'bg-purple-600/80 text-white'
-                : 'bg-transparent hover:bg-purple-600/20 border border-purple-500/50 text-cyan-100'
+                ? 'bg-primary/80 text-white'
+                : 'bg-transparent hover:bg-primary/20 border border-primary/50 text-foreground'
                 }`}
             >
               HOME
@@ -220,8 +221,8 @@ const Index = () => {
             <button
               onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
               className={`px-2 sm:px-6 py-1.5 sm:py-2 text-xs sm:text-base rounded-full font-medium transition-all duration-300 ${activeSection === 'features'
-                ? 'bg-purple-600/80 text-white'
-                : 'bg-transparent hover:bg-purple-600/20 border border-purple-500/50 text-cyan-100'
+                ? 'bg-primary/80 text-white'
+                : 'bg-transparent hover:bg-primary/20 border border-primary/50 text-foreground'
                 }`}
             >
               FEATURES
@@ -229,15 +230,15 @@ const Index = () => {
             <button
               onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
               className={`hidden sm:block px-2 sm:px-6 py-1.5 sm:py-2 text-xs sm:text-base rounded-full font-medium transition-all duration-300 ${activeSection === 'how-it-works'
-                ? 'bg-purple-600/80 text-white'
-                : 'bg-transparent hover:bg-purple-600/20 border border-purple-500/50 text-cyan-100'
+                ? 'bg-primary/80 text-white'
+                : 'bg-transparent hover:bg-primary/20 border border-primary/50 text-foreground'
                 }`}
             >
               HOW IT WORKS
             </button>
             <button
               onClick={() => setShowProfile(true)}
-              className="px-2 sm:px-6 py-1.5 sm:py-2 text-xs sm:text-base rounded-full bg-transparent hover:bg-purple-600/20 border border-purple-500/50 text-cyan-100 font-medium transition-all duration-300"
+              className="px-2 sm:px-6 py-1.5 sm:py-2 text-xs sm:text-base rounded-full bg-transparent hover:bg-primary/20 border border-primary/50 text-foreground font-medium transition-all duration-300"
             >
               CONTACT
             </button>
@@ -261,7 +262,7 @@ const Index = () => {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="inline-block mb-6"
             >
-              <Sparkles className="w-12 h-12 text-purple-400 mx-auto" />
+              <Sparkles className="w-12 h-12 mx-auto" style={{ color: 'hsl(var(--primary))' }} />
             </motion.div>
 
             {/* Hero Heading with animated gradient */}
@@ -272,10 +273,9 @@ const Index = () => {
               className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black mb-4 sm:mb-6 relative px-2"
             >
               <span
-                className="bg-gradient-to-r from-purple-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent animate-gradient"
+                className="theme-gradient-text-animated"
                 style={{
-                  backgroundSize: "200% 200%",
-                  filter: "drop-shadow(0 0 80px rgba(168, 85, 247, 0.5))",
+                  filter: "drop-shadow(0 0 80px hsl(var(--primary) / 0.5))",
                 }}
               >
                 ✨ ChillCast ✨
@@ -303,10 +303,10 @@ const Index = () => {
                 whileTap={{ scale: 0.95 }}
                 className="relative group"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
+                <div className="absolute inset-0 theme-gradient-bg rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
                 <Button
                   onClick={() => navigate("/room?mode=create")}
-                  className="relative w-full sm:w-auto px-8 sm:px-12 py-6 sm:py-8 text-base sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 rounded-2xl shadow-2xl group overflow-hidden"
+                  className="relative w-full sm:w-auto px-8 sm:px-12 py-6 sm:py-8 text-base sm:text-xl font-bold theme-button-gradient rounded-2xl shadow-2xl group overflow-hidden text-white"
                 >
                   <span className="relative z-10 flex items-center gap-2">
                     Create Room
@@ -327,11 +327,11 @@ const Index = () => {
                 whileTap={{ scale: 0.95 }}
                 className="relative group"
               >
-                <div className="absolute inset-0 bg-cyan-500/30 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
+                <div className="absolute inset-0 bg-accent/30 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
                 <Button
                   onClick={() => navigate("/room?mode=join")}
                   variant="outline"
-                  className="relative w-full sm:w-auto px-8 sm:px-12 py-6 sm:py-8 text-base sm:text-xl font-bold border-2 border-cyan-500/70 hover:border-cyan-400 hover:bg-cyan-500/10 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden text-cyan-100"
+                  className="relative w-full sm:w-auto px-8 sm:px-12 py-6 sm:py-8 text-base sm:text-xl font-bold border-2 border-accent/70 hover:border-accent hover:bg-accent/10 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden text-foreground"
                 >
                   <span className="relative z-10 flex items-center gap-2">
                     Join Room
@@ -351,7 +351,7 @@ const Index = () => {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl sm:text-5xl font-bold mb-3 sm:mb-4 text-center bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+            <h2 className="text-3xl sm:text-5xl font-bold mb-3 sm:mb-4 text-center theme-gradient-text">
               Features
             </h2>
             <p className="text-base sm:text-xl text-muted-foreground text-center mb-8 sm:mb-16">
@@ -422,7 +422,7 @@ const Index = () => {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl sm:text-5xl font-bold mb-3 sm:mb-4 text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            <h2 className="text-3xl sm:text-5xl font-bold mb-3 sm:mb-4 text-center theme-gradient-text">
               How It Works
             </h2>
             <p className="text-base sm:text-xl text-muted-foreground text-center mb-8 sm:mb-16">
@@ -441,17 +441,17 @@ const Index = () => {
                 >
                   {/* Connection line */}
                   {index < steps.length - 1 && (
-                    <div className="hidden md:block absolute top-16 left-full w-full h-0.5 bg-gradient-to-r from-purple-500/50 to-transparent -z-10" />
+                    <div className="hidden md:block absolute top-16 left-full w-full h-0.5 bg-gradient-to-r from-primary/50 to-transparent -z-10" />
                   )}
 
                   <div className="glass-card p-8 rounded-2xl border border-white/10 hover:border-purple-500/50 transition-all duration-300 text-center">
                     <motion.div
-                      className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center text-3xl font-black text-white shadow-2xl"
+                      className="w-20 h-20 mx-auto mb-6 rounded-full theme-button-gradient flex items-center justify-center text-3xl font-black text-white shadow-2xl"
                       whileHover={{ scale: 1.1, rotate: 5 }}
                     >
                       {step.number}
                     </motion.div>
-                    <step.icon className="w-12 h-12 mx-auto mb-4 text-purple-400" />
+                    <step.icon className="w-12 h-12 mx-auto mb-4" style={{ color: 'hsl(var(--accent))' }} />
                     <h3 className="text-2xl font-bold mb-3">{step.title}</h3>
                     <p className="text-muted-foreground">{step.description}</p>
                   </div>
@@ -470,9 +470,9 @@ const Index = () => {
             viewport={{ once: true }}
             className="glass-card p-6 sm:p-12 rounded-3xl border border-white/10 text-center relative overflow-hidden"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-cyan-600/20" />
+            <div className="absolute inset-0 theme-gradient-bg-glow" />
             <div className="relative z-10">
-              <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+              <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 theme-gradient-text">
                 Ready to Start Watching?
               </h2>
               <p className="text-base sm:text-xl text-muted-foreground mb-6 sm:mb-8">
@@ -485,7 +485,7 @@ const Index = () => {
                 <Button
                   onClick={() => navigate("/room?mode=create")}
                   size="lg"
-                  className="w-full sm:w-auto px-8 sm:px-16 py-6 sm:py-8 text-base sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 rounded-2xl shadow-2xl"
+                  className="w-full sm:w-auto px-8 sm:px-16 py-6 sm:py-8 text-base sm:text-xl font-bold theme-button-gradient rounded-2xl shadow-2xl text-white"
                 >
                   <span className="flex items-center gap-2">
                     Get Started Free
@@ -507,6 +507,7 @@ const Index = () => {
       </div>
 
       <ProfilePopup isOpen={showProfile} onClose={() => setShowProfile(false)} />
+      <ThemeSwitcher />
 
       <footer className="relative z-20 text-center py-4 sm:py-6 text-xs sm:text-base text-muted-foreground bg-background/40 backdrop-blur-md border-t border-border/50 px-4">
         © 2025 ChillCast | Created by{" "}
